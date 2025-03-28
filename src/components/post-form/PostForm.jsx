@@ -15,14 +15,13 @@ export default function PostForm({ post }) {
         },
     });
 
-    const [showPopup, setShowPopup] = useState(false);  // State for popup visibility
+    const [showPopup, setShowPopup] = useState(false);
     const navigate = useNavigate();
     const userData = useSelector((state) => state.auth.userData);
 
     const submit = async (data) => {
-        // Check for required fields validation
         if (Object.keys(errors).length > 0) {
-            setShowPopup(true); // Show pop-up if validation fails
+            setShowPopup(true);
             return;
         }
 
@@ -45,8 +44,7 @@ export default function PostForm({ post }) {
             const file = await appwriteService.uploadFile(data.image[0]);
 
             if (file) {
-                const fileId = file.$id;
-                data.featuredImage = fileId;
+                data.featuredImage = file.$id;
                 const dbPost = await appwriteService.createPost({ ...data, userID: userData.$id });
 
                 if (dbPost) {
@@ -94,63 +92,66 @@ export default function PostForm({ post }) {
                 </div>
             )}
 
-            <form onSubmit={handleSubmit(submit)} className="flex flex-wrap">
-                <div className="w-2/3 px-2">
-                    <Input
-                        label="Title :"
-                        placeholder="Title"
-                        className="mb-4"
-                        {...register("title", { required: true })}
-                    />
-                    {errors.title && <p className="text-red-500 text-sm">Title is required</p>}
+            <form onSubmit={handleSubmit(submit)} className="flex flex-col space-y-4">
+                <Input
+                    label="Title :"
+                    placeholder="Title"
+                    className="mb-4"
+                    {...register("title", { required: true })}
+                />
+                {errors.title && <p className="text-red-500 text-sm">Title is required</p>}
 
-                    <Input
-                        label="Slug :"
-                        placeholder="Slug"
-                        className="mb-4"
-                        {...register("slug", { required: true })}
-                        onInput={(e) => {
-                            setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate: true });
-                        }}
-                    />
-                    {errors.slug && <p className="text-red-500 text-sm">Slug is required</p>}
+                <Input
+                    label="Slug :"
+                    placeholder="Slug"
+                    className="mb-4"
+                    {...register("slug", { required: true })}
+                    onInput={(e) => {
+                        setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate: true });
+                    }}
+                />
+                {errors.slug && <p className="text-red-500 text-sm">Slug is required</p>}
 
-                    <RTE label="Content :" name="content" control={control} defaultValue={getValues("content")} />
-                    {errors.content && <p className="text-red-500 text-sm">Content is required</p>}
-                </div>
-                <div className="w-1/3 px-2">
-                    <Input
-                        label="Featured Image :"
-                        type="file"
-                        className="mb-4"
-                        accept="image/png, image/jpg, image/jpeg, image/gif"
-                        {...register("image", { required: !post })}
-                    />
-                    {post && (
-                        <div className="w-full mb-4">
-                            <img
-                                src={appwriteService.getFilePreview(post.featuredImage)}
-                                alt={post.title}
-                                className="rounded-lg"
-                            />
-                        </div>
-                    )}
-                    <Select
-                        options={["active", "inactive"]}
-                        label="Status"
-                        className="mb-4"
-                        {...register("status", { required: true })}
-                    />
-                    {errors.status && <p className="text-red-500 text-sm">Status is required</p>}
+                <RTE
+                    label="Content :"
+                    name="content"
+                    control={control}
+                    defaultValue={getValues("content")}
+                />
+                {errors.content && <p className="text-red-500 text-sm">Content is required</p>}
 
-                    <Button
-                        type="submit"
-                        bgColor={post ? "bg-green-500" : undefined}
-                        className="w-full transform transition duration-200 ease-in-out hover:bg-blue-500 hover:scale-105 active:bg-blue-700 cursor-pointer"
-                    >
-                        {post ? "Update" : "Submit"}
-                    </Button>
-                </div>
+                <Input
+                    label="Featured Image :"
+                    type="file"
+                    className="mb-4"
+                    accept="image/png, image/jpg, image/jpeg, image/gif"
+                    {...register("image", { required: !post })}
+                />
+                {post && (
+                    <div className="w-full mb-4">
+                        <img
+                            src={appwriteService.getFilePreview(post.featuredImage)}
+                            alt={post.title}
+                            className="rounded-lg"
+                        />
+                    </div>
+                )}
+
+                <Select
+                    options={["active", "inactive"]}
+                    label="Status"
+                    className="mb-4"
+                    {...register("status", { required: true })}
+                />
+                {errors.status && <p className="text-red-500 text-sm">Status is required</p>}
+
+                <Button
+                    type="submit"
+                    bgColor={post ? "bg-green-500" : undefined}
+                    className="w-full transform transition duration-200 ease-in-out hover:bg-blue-500 hover:scale-105 active:bg-blue-700 cursor-pointer"
+                >
+                    {post ? "Update" : "Submit"}
+                </Button>
             </form>
         </div>
     );
