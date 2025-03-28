@@ -55,12 +55,6 @@ function Header() {
               </div>
             )}
           </div>
-
-<<<<<<< HEAD
-          {/* Mobile Menu Button */}
-=======
-          {/* Mobile Menu Button - hamburger */}
->>>>>>> 3c7f6c1ca66dfa76479edd501f938847dba869a4
           <button
             className="md:hidden p-2 rounded-lg hover:bg-gray-100"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
